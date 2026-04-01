@@ -1,0 +1,538 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Alexander Dahdouh — Finance Manager</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400&family=DM+Mono:wght@300;400&family=Outfit:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --navy: #0d1b2a;
+    --navy-mid: #132336;
+    --navy-light: #1e3550;
+    --gold: #c9a84c;
+    --gold-light: #e2c47a;
+    --cream: #f5f0e8;
+    --text: #e8e2d8;
+    --muted: #8a9bb0;
+    --line: rgba(201,168,76,0.2);
+  }
+
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    background: var(--navy);
+    color: var(--text);
+    font-family: 'Outfit', sans-serif;
+    font-weight: 300;
+    line-height: 1.6;
+    min-height: 100vh;
+    overflow-x: hidden;
+  }
+
+  /* Background texture */
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background:
+      radial-gradient(ellipse 80% 60% at 10% 10%, rgba(30,53,80,0.6) 0%, transparent 60%),
+      radial-gradient(ellipse 60% 50% at 90% 80%, rgba(201,168,76,0.06) 0%, transparent 60%);
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  .container {
+    max-width: 900px;
+    margin: 0 auto;
+    padding: 0 2rem;
+    position: relative;
+    z-index: 1;
+  }
+
+  /* ── HEADER ── */
+  header {
+    padding: 5rem 0 3rem;
+    border-bottom: 1px solid var(--line);
+    opacity: 0;
+    transform: translateY(20px);
+    animation: fadeUp 0.8s ease forwards;
+  }
+
+  .name {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: clamp(3rem, 8vw, 5.5rem);
+    font-weight: 300;
+    letter-spacing: -0.02em;
+    line-height: 1;
+    color: var(--cream);
+  }
+
+  .name span {
+    color: var(--gold);
+    font-style: italic;
+  }
+
+  .title-line {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.7rem;
+    font-weight: 300;
+    letter-spacing: 0.25em;
+    text-transform: uppercase;
+    color: var(--gold);
+    margin: 1.2rem 0 0.8rem;
+  }
+
+  .contact-row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1.5rem;
+    font-family: 'DM Mono', monospace;
+    font-size: 0.72rem;
+    color: var(--muted);
+    margin-top: 1.2rem;
+  }
+
+  .contact-row a {
+    color: var(--gold-light);
+    text-decoration: none;
+    transition: color 0.2s;
+  }
+  .contact-row a:hover { color: var(--cream); }
+
+  .contact-item::before {
+    content: '→ ';
+    color: var(--gold);
+  }
+
+  /* ── LAYOUT ── */
+  main {
+    display: grid;
+    grid-template-columns: 1fr 240px;
+    gap: 0 3.5rem;
+    padding: 3rem 0 5rem;
+  }
+
+  @media (max-width: 680px) {
+    main { grid-template-columns: 1fr; }
+    .sidebar { order: -1; }
+  }
+
+  /* ── SECTION ── */
+  .section {
+    margin-bottom: 3rem;
+    opacity: 0;
+    transform: translateY(16px);
+    animation: fadeUp 0.7s ease forwards;
+  }
+
+  .section:nth-child(1) { animation-delay: 0.15s; }
+  .section:nth-child(2) { animation-delay: 0.25s; }
+  .section:nth-child(3) { animation-delay: 0.35s; }
+
+  .section-label {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.65rem;
+    letter-spacing: 0.3em;
+    text-transform: uppercase;
+    color: var(--gold);
+    margin-bottom: 1.5rem;
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+  }
+
+  .section-label::after {
+    content: '';
+    flex: 1;
+    height: 1px;
+    background: var(--line);
+  }
+
+  /* ── JOB ── */
+  .job {
+    margin-bottom: 2.2rem;
+    padding-bottom: 2.2rem;
+    border-bottom: 1px solid rgba(255,255,255,0.05);
+  }
+  .job:last-child { border-bottom: none; padding-bottom: 0; }
+
+  .job-header { display: flex; justify-content: space-between; align-items: baseline; flex-wrap: wrap; gap: 0.5rem; }
+
+  .job-title {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 1.35rem;
+    font-weight: 600;
+    color: var(--cream);
+  }
+
+  .job-date {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.65rem;
+    color: var(--gold);
+    letter-spacing: 0.05em;
+    white-space: nowrap;
+  }
+
+  .job-company {
+    font-size: 0.8rem;
+    color: var(--muted);
+    margin: 0.2rem 0 0.8rem;
+    font-weight: 400;
+  }
+
+  .job-company strong {
+    color: var(--gold-light);
+    font-weight: 400;
+  }
+
+  .bullets {
+    list-style: none;
+    display: flex;
+    flex-direction: column;
+    gap: 0.45rem;
+  }
+
+  .bullets li {
+    font-size: 0.85rem;
+    color: #b0bfcc;
+    padding-left: 1.2rem;
+    position: relative;
+    line-height: 1.55;
+  }
+
+  .bullets li::before {
+    content: '◆';
+    font-size: 0.4rem;
+    color: var(--gold);
+    position: absolute;
+    left: 0;
+    top: 0.45em;
+  }
+
+  /* ── SIDEBAR ── */
+  .sidebar {
+    opacity: 0;
+    transform: translateY(16px);
+    animation: fadeUp 0.7s ease forwards 0.4s;
+  }
+
+  .sidebar-section {
+    margin-bottom: 2.5rem;
+  }
+
+  /* ── SKILLS ── */
+  .skill-group { margin-bottom: 1.2rem; }
+
+  .skill-group-name {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.6rem;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--gold);
+    margin-bottom: 0.5rem;
+  }
+
+  .skill-tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.35rem;
+  }
+
+  .tag {
+    font-size: 0.72rem;
+    background: rgba(201,168,76,0.08);
+    border: 1px solid rgba(201,168,76,0.2);
+    color: var(--text);
+    padding: 0.2rem 0.6rem;
+    border-radius: 2px;
+    transition: background 0.2s, border-color 0.2s;
+  }
+
+  .tag:hover {
+    background: rgba(201,168,76,0.16);
+    border-color: rgba(201,168,76,0.5);
+  }
+
+  /* ── EDUCATION ── */
+  .edu-school {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 1.1rem;
+    font-weight: 600;
+    color: var(--cream);
+  }
+
+  .edu-detail {
+    font-size: 0.78rem;
+    color: var(--muted);
+    line-height: 1.5;
+    margin-top: 0.3rem;
+  }
+
+  /* ── ACHIEVEMENTS ── */
+  .achievement {
+    margin-bottom: 1rem;
+  }
+
+  .achievement-org {
+    font-size: 0.78rem;
+    color: var(--gold-light);
+    font-weight: 500;
+    margin-bottom: 0.2rem;
+  }
+
+  .achievement-detail {
+    font-size: 0.75rem;
+    color: var(--muted);
+    line-height: 1.4;
+  }
+
+  /* ── STAT BAR ── */
+  .stat-bar {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1px;
+    background: var(--line);
+    margin: 2rem 0;
+    border: 1px solid var(--line);
+  }
+
+  .stat {
+    background: var(--navy);
+    padding: 1rem 0.8rem;
+    text-align: center;
+    transition: background 0.2s;
+  }
+  .stat:hover { background: var(--navy-mid); }
+
+  .stat-num {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 1.8rem;
+    font-weight: 300;
+    color: var(--gold);
+    line-height: 1;
+  }
+
+  .stat-label {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.55rem;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin-top: 0.3rem;
+  }
+
+  @keyframes fadeUp {
+    to { opacity: 1; transform: translateY(0); }
+  }
+</style>
+</head>
+<body>
+<div class="container">
+
+  <header>
+    <p class="title-line">Finance Manager · FP&amp;A · Strategic Planning</p>
+    <h1 class="name">Alexander <span>Dahdouh</span></h1>
+    <div class="contact-row">
+      <span class="contact-item">Strongsville, OH</span>
+      <span class="contact-item">(440) 381-4431</span>
+      <a class="contact-item" href="mailto:Dahdouhap@gmail.com">Dahdouhap@gmail.com</a>
+      <a class="contact-item" href="https://linkedin.com/in/alexanderdahdouh/" target="_blank">linkedin.com/in/alexanderdahdouh</a>
+    </div>
+
+    <div class="stat-bar">
+      <div class="stat">
+        <div class="stat-num">6+</div>
+        <div class="stat-label">Years Experience</div>
+      </div>
+      <div class="stat">
+        <div class="stat-num">$300M</div>
+        <div class="stat-label">P&amp;L Managed</div>
+      </div>
+      <div class="stat">
+        <div class="stat-num">$6M</div>
+        <div class="stat-label">Cost Savings Led</div>
+      </div>
+    </div>
+  </header>
+
+  <main>
+    <!-- PRIMARY COLUMN -->
+    <div class="primary">
+
+      <div class="section">
+        <h2 class="section-label">Professional Experience</h2>
+
+        <div class="job">
+          <div class="job-header">
+            <span class="job-title">Finance Manager</span>
+            <span class="job-date">Apr 2025 — Present</span>
+          </div>
+          <p class="job-company"><strong>Firelands Scientific</strong> · Westlake, OH</p>
+          <ul class="bullets">
+            <li>Developed and maintained a 13-week rolling cash flow forecast to ensure adequate capital for vertically integrated operations</li>
+            <li>Direct end-to-end P&amp;L management identifying key drivers for revenue growth and margin expansion</li>
+            <li>Lead annual planning and monthly variance analysis for a $30M Operating Expense budget</li>
+            <li>Direct preparation and publication of monthly, quarterly, and annual financial statements for leadership and investors</li>
+          </ul>
+        </div>
+
+        <div class="job">
+          <div class="job-header">
+            <span class="job-title">Corporate FP&amp;A Analyst</span>
+            <span class="job-date">Apr 2024 — Apr 2025</span>
+          </div>
+          <p class="job-company"><strong>The Lubrizol Corporation</strong> · Wickliffe, OH</p>
+          <ul class="bullets">
+            <li>Developed detailed financial models supporting corporate forecasting, budgeting, and long-term strategic planning</li>
+            <li>Assisted in preparation of annual budgets aligned with corporate goals, regional targets, and market conditions</li>
+            <li>Conducted variance analysis comparing actuals against forecasts with insights into key financial drivers</li>
+            <li>Provided financial guidance to cross-functional teams ensuring alignment between financial objectives and business strategy</li>
+          </ul>
+        </div>
+
+        <div class="job">
+          <div class="job-header">
+            <span class="job-title">Senior Financial Analyst</span>
+            <span class="job-date">Jun 2022 — Apr 2024</span>
+          </div>
+          <p class="job-company"><strong>The Lubrizol Corporation</strong> · Brecksville, OH</p>
+          <ul class="bullets">
+            <li>Advised on pricing strategies recovering $3M in margin erosion during the COVID period</li>
+            <li>Managed full P&amp;L for $300M division with variance analysis and actionable insights for financial decisions</li>
+            <li>Identified and executed $6M in annual cost savings by analyzing excess and obsolete inventory trends</li>
+            <li>Administered $1M in annual rebates ensuring accurate accruals and on-time payouts</li>
+          </ul>
+        </div>
+
+        <div class="job">
+          <div class="job-header">
+            <span class="job-title">Senior Financial Analyst</span>
+            <span class="job-date">Oct 2020 — Jun 2022</span>
+          </div>
+          <p class="job-company"><strong>Eaton Corporation</strong> · Finance Leadership Development Program (FLDP)</p>
+          <ul class="bullets">
+            <li>Developed storyboard commentary for monthly sales, inventory, and profit variances vs. rolling forecast</li>
+            <li>Achieved +2 working days productivity improvement through automation in Microsoft Excel</li>
+            <li>Owned end-to-end responsibilities for over $3M annual CapEx budget</li>
+            <li>Spearheaded $25M fixed asset audit end-to-end for locations across the US</li>
+            <li>Led the budgeting process (Sales/COGS/Expense) for forty activity centers</li>
+          </ul>
+        </div>
+
+        <div class="job">
+          <div class="job-header">
+            <span class="job-title">Plant Financial Analyst</span>
+            <span class="job-date">Jul 2019 — Oct 2020</span>
+          </div>
+          <p class="job-company"><strong>Eaton Corporation</strong> · Finance Leadership Development Program (FLDP)</p>
+          <ul class="bullets">
+            <li>Spearheaded $80M fixed asset audit for plant, completed once every five years</li>
+            <li>Led PowerBI implementation at facility — built 100+ queries, trained both local and divisional staff</li>
+            <li>Supported $90M balance sheet and $25M inventory monthly and profit plan forecasts</li>
+            <li>Supported month-end close processes, journal entries, and account reconciliations</li>
+          </ul>
+        </div>
+
+        <div class="job">
+          <div class="job-header">
+            <span class="job-title">Finance &amp; Accounting Intern</span>
+            <span class="job-date">Aug 2018 — May 2019</span>
+          </div>
+          <p class="job-company"><strong>The Lubrizol Corporation</strong> · Internship</p>
+          <ul class="bullets">
+            <li>Created Power BI dashboards and reports on forecasting, cost centers, and daily sales reporting</li>
+            <li>Responsible for publishing and updating daily financial reports for senior executives</li>
+            <li>Managed rebate and commission accruals for the business unit during month close</li>
+            <li>Built Excel dashboard summaries using advanced querying applications</li>
+          </ul>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- SIDEBAR -->
+    <aside class="sidebar">
+
+      <div class="sidebar-section">
+        <h2 class="section-label">Education</h2>
+        <div class="edu-school">John Carroll University</div>
+        <div class="edu-detail">
+          Bachelor of Science in Business Administration<br>
+          Major: Accountancy<br>
+          Graduated May 2019
+        </div>
+      </div>
+
+      <div class="sidebar-section">
+        <h2 class="section-label">Skills</h2>
+
+        <div class="skill-group">
+          <div class="skill-group-name">Finance</div>
+          <div class="skill-tags">
+            <span class="tag">Financial Analysis</span>
+            <span class="tag">Budgeting</span>
+            <span class="tag">Forecasting</span>
+            <span class="tag">P&amp;L Analysis</span>
+            <span class="tag">Variance Reporting</span>
+          </div>
+        </div>
+
+        <div class="skill-group">
+          <div class="skill-group-name">Tools</div>
+          <div class="skill-tags">
+            <span class="tag">Power BI</span>
+            <span class="tag">Power Query (M)</span>
+            <span class="tag">PowerPivot (DAX)</span>
+            <span class="tag">Advanced Excel</span>
+          </div>
+        </div>
+
+        <div class="skill-group">
+          <div class="skill-group-name">ERP Systems</div>
+          <div class="skill-tags">
+            <span class="tag">Oracle R12/11i</span>
+            <span class="tag">SAP</span>
+            <span class="tag">SAC</span>
+            <span class="tag">S/4H</span>
+            <span class="tag">ECC</span>
+          </div>
+        </div>
+
+        <div class="skill-group">
+          <div class="skill-group-name">Manufacturing</div>
+          <div class="skill-tags">
+            <span class="tag">VISTA</span>
+            <span class="tag">AS400</span>
+            <span class="tag">Mapics</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="sidebar-section">
+        <h2 class="section-label">Achievements</h2>
+
+        <div class="achievement">
+          <div class="achievement-org">North Ohio Council of Higher Education</div>
+          <div class="achievement-detail">The Expy's Best Intern Finalist · May 2019</div>
+        </div>
+
+        <div class="achievement">
+          <div class="achievement-org">VITA</div>
+          <div class="achievement-detail">Volunteer Income Tax Preparer for Low Income Families</div>
+        </div>
+
+        <div class="achievement">
+          <div class="achievement-org">Ohio Society of CPAs (OSCPA)</div>
+          <div class="achievement-detail">Accounting Careers Leadership Academy Participant</div>
+        </div>
+      </div>
+
+    </aside>
+  </main>
+
+</div>
+</body>
+</html>
