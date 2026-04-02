@@ -1,0 +1,639 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>13-Week Cash Flow Forecast — Alexander Dahdouh</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400&family=DM+Mono:wght@300;400&family=Outfit:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --navy: #0d1b2a;
+    --navy-mid: #132336;
+    --gold: #c9a84c;
+    --gold-light: #e2c47a;
+    --cream: #f5f0e8;
+    --text: #e8e2d8;
+    --muted: #8a9bb0;
+    --line: rgba(201,168,76,0.18);
+    --card: #132336;
+    --green: #1D9E75;
+    --red: #E24B4A;
+    --amber: #BA7517;
+  }
+
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  html { scroll-behavior: smooth; }
+
+  body {
+    background: var(--navy);
+    color: var(--text);
+    font-family: 'Outfit', sans-serif;
+    font-weight: 300;
+    line-height: 1.6;
+    min-height: 100vh;
+  }
+
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background-image:
+      linear-gradient(rgba(201,168,76,0.03) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(201,168,76,0.03) 1px, transparent 1px);
+    background-size: 60px 60px;
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  .container {
+    max-width: 1000px;
+    margin: 0 auto;
+    padding: 0 2rem 4rem;
+    position: relative;
+    z-index: 1;
+  }
+
+  /* NAV */
+  nav {
+    padding: 1.5rem 0;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-bottom: 1px solid var(--line);
+    margin-bottom: 3rem;
+  }
+  .nav-logo {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.72rem;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--gold);
+    text-decoration: none;
+  }
+  .nav-back {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.65rem;
+    letter-spacing: 0.12em;
+    color: var(--muted);
+    text-decoration: none;
+    transition: color 0.2s;
+  }
+  .nav-back:hover { color: var(--gold-light); }
+
+  /* HEADER */
+  .page-header {
+    margin-bottom: 2.5rem;
+    opacity: 0;
+    animation: fadeUp 0.7s ease forwards;
+  }
+  .page-eyebrow {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.62rem;
+    letter-spacing: 0.25em;
+    text-transform: uppercase;
+    color: var(--gold);
+    margin-bottom: 0.75rem;
+  }
+  .page-title {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: clamp(2rem, 5vw, 3.2rem);
+    font-weight: 300;
+    color: var(--cream);
+    line-height: 1.1;
+  }
+  .page-title em { font-style: italic; color: var(--gold); }
+  .page-desc {
+    margin-top: 0.75rem;
+    font-size: 0.85rem;
+    color: var(--muted);
+    max-width: 560px;
+  }
+
+  /* CARDS */
+  .card {
+    background: var(--card);
+    border: 1px solid var(--line);
+    border-radius: 4px;
+    padding: 1.5rem;
+    margin-bottom: 1rem;
+  }
+  .card-label {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.6rem;
+    letter-spacing: 0.25em;
+    text-transform: uppercase;
+    color: var(--gold);
+    margin-bottom: 1rem;
+  }
+
+  /* GRIDS */
+  .grid2 { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
+  .grid3 { display: grid; grid-template-columns: repeat(3,1fr); gap: 1rem; }
+  .grid4 { display: grid; grid-template-columns: repeat(4,1fr); gap: 0.75rem; }
+  @media(max-width:640px) {
+    .grid2,.grid3,.grid4 { grid-template-columns: 1fr 1fr; }
+  }
+  @media(max-width:420px) {
+    .grid2,.grid3,.grid4 { grid-template-columns: 1fr; }
+  }
+
+  /* FIELDS */
+  .field { display: flex; flex-direction: column; gap: 5px; }
+  .field label {
+    font-size: 0.72rem;
+    color: var(--muted);
+    font-family: 'DM Mono', monospace;
+    letter-spacing: 0.04em;
+  }
+  .field input {
+    background: rgba(13,27,42,0.8);
+    border: 1px solid rgba(201,168,76,0.2);
+    border-radius: 2px;
+    padding: 0.5rem 0.75rem;
+    font-family: 'DM Mono', monospace;
+    font-size: 0.82rem;
+    color: var(--cream);
+    width: 100%;
+    transition: border-color 0.2s;
+  }
+  .field input:focus {
+    outline: none;
+    border-color: var(--gold);
+  }
+
+  /* METRICS */
+  .metrics-row {
+    display: grid;
+    grid-template-columns: repeat(4,1fr);
+    gap: 1px;
+    background: var(--line);
+    border: 1px solid var(--line);
+    margin-bottom: 1rem;
+    opacity: 0;
+    animation: fadeUp 0.6s ease forwards 0.2s;
+  }
+  @media(max-width:640px) { .metrics-row { grid-template-columns: repeat(2,1fr); } }
+
+  .metric {
+    background: var(--navy-mid, #132336);
+    padding: 1.1rem 1rem;
+    text-align: center;
+  }
+  .metric-label {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.55rem;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin-bottom: 0.4rem;
+  }
+  .metric-val {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 1.7rem;
+    font-weight: 300;
+    color: var(--gold);
+    line-height: 1;
+  }
+  .metric-val.pos { color: var(--green); }
+  .metric-val.neg { color: var(--red); }
+  .metric-val.warn { color: var(--amber); }
+
+  /* CHART */
+  .chart-card {
+    background: var(--card);
+    border: 1px solid var(--line);
+    border-radius: 4px;
+    padding: 1.25rem 1.5rem;
+    margin-bottom: 1rem;
+    opacity: 0;
+    animation: fadeUp 0.6s ease forwards 0.3s;
+  }
+  .chart-legend {
+    display: flex;
+    gap: 1.5rem;
+    margin-bottom: 1rem;
+    flex-wrap: wrap;
+  }
+  .legend-item {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-family: 'DM Mono', monospace;
+    font-size: 0.6rem;
+    letter-spacing: 0.08em;
+    color: var(--muted);
+  }
+  .legend-dot {
+    width: 10px;
+    height: 10px;
+    border-radius: 2px;
+  }
+
+  /* TABLE */
+  .table-card {
+    background: var(--card);
+    border: 1px solid var(--line);
+    border-radius: 4px;
+    padding: 1.25rem 1.5rem;
+    margin-bottom: 1rem;
+    overflow-x: auto;
+    opacity: 0;
+    animation: fadeUp 0.6s ease forwards 0.4s;
+  }
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    font-family: 'DM Mono', monospace;
+    font-size: 0.68rem;
+    min-width: 700px;
+  }
+  th {
+    padding: 0.5rem 0.6rem;
+    text-align: right;
+    color: var(--muted);
+    font-weight: 300;
+    border-bottom: 1px solid var(--line);
+    white-space: nowrap;
+  }
+  th:first-child { text-align: left; }
+  td {
+    padding: 0.45rem 0.6rem;
+    text-align: right;
+    border-bottom: 1px solid rgba(201,168,76,0.06);
+    color: var(--text);
+  }
+  td:first-child { text-align: left; color: var(--muted); }
+  tr:last-child td { border-bottom: none; font-weight: 400; color: var(--cream); }
+  .pos-cell { color: var(--green) !important; }
+  .neg-cell { color: var(--red) !important; }
+
+  /* AI PANEL */
+  .ai-card {
+    background: var(--card);
+    border: 1px solid var(--line);
+    border-radius: 4px;
+    padding: 1.5rem;
+    opacity: 0;
+    animation: fadeUp 0.6s ease forwards 0.5s;
+  }
+  .ai-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1rem;
+    flex-wrap: wrap;
+    gap: 0.75rem;
+  }
+  .analyze-btn {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.65rem;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    padding: 0.6rem 1.2rem;
+    background: var(--gold);
+    color: var(--navy);
+    border: none;
+    border-radius: 2px;
+    cursor: pointer;
+    transition: background 0.2s, opacity 0.2s;
+    font-weight: 400;
+  }
+  .analyze-btn:hover { background: var(--gold-light); }
+  .analyze-btn:disabled { opacity: 0.5; cursor: not-allowed; }
+  .ai-output {
+    font-size: 0.84rem;
+    color: var(--muted);
+    line-height: 1.75;
+    min-height: 60px;
+  }
+  .ai-output p { margin-bottom: 0.75rem; }
+  .ai-output p:last-child { margin-bottom: 0; }
+  .ai-thinking { font-style: italic; color: var(--muted); font-size: 0.8rem; }
+
+  /* INPUTS SECTION */
+  .inputs-section {
+    opacity: 0;
+    animation: fadeUp 0.6s ease forwards 0.1s;
+  }
+
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(14px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+</style>
+</head>
+<body>
+<div class="container">
+
+  <nav>
+    <a href="index.html" class="nav-logo">A. Dahdouh</a>
+    <a href="index.html" class="nav-back">← Back to Portfolio</a>
+  </nav>
+
+  <div class="page-header">
+    <p class="page-eyebrow">Live Tool · AI-Powered · FP&amp;A</p>
+    <h1 class="page-title">13-Week Cash Flow <em>Forecasting</em> Calculator</h1>
+    <p class="page-desc">Enter your weekly assumptions to project your rolling cash position forward, with AI-powered analysis from Claude.</p>
+  </div>
+
+  <!-- METRICS -->
+  <div class="metrics-row">
+    <div class="metric"><div class="metric-label">13-Wk Net Flow</div><div class="metric-val" id="m-netflow">—</div></div>
+    <div class="metric"><div class="metric-label">Ending Balance</div><div class="metric-val" id="m-ending">—</div></div>
+    <div class="metric"><div class="metric-label">Weeks Below Min</div><div class="metric-val" id="m-weeks">—</div></div>
+    <div class="metric"><div class="metric-label">Avg Weekly NCF</div><div class="metric-val" id="m-avg">—</div></div>
+  </div>
+
+  <!-- CHART -->
+  <div class="chart-card">
+    <div class="card-label">Cash Position · 13-Week View</div>
+    <div class="chart-legend">
+      <span class="legend-item"><span class="legend-dot" style="background:#c9a84c;"></span>Cash Balance</span>
+      <span class="legend-item"><span class="legend-dot" style="background:#1D9E75;"></span>Positive NCF</span>
+      <span class="legend-item"><span class="legend-dot" style="background:#E24B4A;"></span>Negative NCF</span>
+    </div>
+    <div style="position:relative; width:100%; height:260px;">
+      <canvas id="cfChart"></canvas>
+    </div>
+  </div>
+
+  <!-- INPUTS -->
+  <div class="inputs-section">
+    <div class="card">
+      <div class="card-label">Starting Position</div>
+      <div class="grid2">
+        <div class="field"><label>Opening Cash Balance ($)</label><input type="number" id="openingCash" value="500000" step="10000"></div>
+        <div class="field"><label>Minimum Cash Threshold ($)</label><input type="number" id="minCash" value="100000" step="10000"></div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-label">Weekly Inflows</div>
+      <div class="grid3">
+        <div class="field"><label>Revenue / Collections ($)</label><input type="number" id="revenue" value="150000" step="5000"></div>
+        <div class="field"><label>AR Collections ($)</label><input type="number" id="ar" value="40000" step="1000"></div>
+        <div class="field"><label>Other Inflows ($)</label><input type="number" id="otherIn" value="5000" step="1000"></div>
+      </div>
+      <div style="margin-top:1rem;" class="grid2">
+        <div class="field"><label>Weekly Revenue Growth (%)</label><input type="number" id="revenueGrowth" value="1" step="0.5" min="-20" max="20"></div>
+        <div class="field"><label>Seasonal Dip (week #, 0 = none)</label><input type="number" id="dipWeek" value="0" step="1" min="0" max="13"></div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-label">Weekly Outflows</div>
+      <div class="grid4">
+        <div class="field"><label>Payroll ($)</label><input type="number" id="payroll" value="60000" step="5000"></div>
+        <div class="field"><label>COGS ($)</label><input type="number" id="cogs" value="45000" step="5000"></div>
+        <div class="field"><label>OpEx ($)</label><input type="number" id="opex" value="20000" step="1000"></div>
+        <div class="field"><label>CapEx ($)</label><input type="number" id="capex" value="5000" step="1000"></div>
+      </div>
+      <div style="margin-top:1rem;" class="grid2">
+        <div class="field"><label>Other Outflows ($)</label><input type="number" id="otherOut" value="3000" step="1000"></div>
+        <div class="field"><label>One-Time Expense — Week 6 ($)</label><input type="number" id="oneTime" value="0" step="5000"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- TABLE -->
+  <div class="table-card">
+    <div class="card-label">Weekly Detail</div>
+    <table>
+      <thead><tr id="tableHead"></tr></thead>
+      <tbody id="tableBody"></tbody>
+    </table>
+  </div>
+
+  <!-- AI ANALYSIS -->
+  <div class="ai-card">
+    <div class="ai-header">
+      <div class="card-label" style="margin:0;">AI Analysis — Claude FP&amp;A Commentary</div>
+      <button class="analyze-btn" id="analyzeBtn" onclick="runAnalysis()">Analyze my forecast →</button>
+    </div>
+    <div class="ai-output" id="aiOutput">
+      <span class="ai-thinking">Click "Analyze my forecast" to get Claude's read on your cash position, key risks, and actionable recommendations.</span>
+    </div>
+  </div>
+
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js"></script>
+<script>
+  let cfChart = null;
+
+  function fmt(n) {
+    if (n === undefined || isNaN(n)) return '—';
+    const abs = Math.abs(Math.round(n));
+    const s = abs >= 1000000
+      ? '$' + (abs / 1000000).toFixed(2) + 'M'
+      : abs >= 1000
+      ? '$' + (abs / 1000).toFixed(1) + 'K'
+      : '$' + abs.toLocaleString();
+    return n < 0 ? '-' + s : s;
+  }
+
+  function fmtFull(n) {
+    return (n < 0 ? '-$' : '$') + Math.abs(Math.round(n)).toLocaleString();
+  }
+
+  function getVal(id) { return parseFloat(document.getElementById(id).value) || 0; }
+
+  function buildForecast() {
+    const opening = getVal('openingCash');
+    const minCash = getVal('minCash');
+    const baseRev = getVal('revenue');
+    const ar = getVal('ar');
+    const otherIn = getVal('otherIn');
+    const growth = getVal('revenueGrowth') / 100;
+    const dipWeek = getVal('dipWeek');
+    const payroll = getVal('payroll');
+    const cogs = getVal('cogs');
+    const opex = getVal('opex');
+    const capex = getVal('capex');
+    const otherOut = getVal('otherOut');
+    const oneTime = getVal('oneTime');
+
+    const weeks = [];
+    let balance = opening;
+    for (let w = 1; w <= 13; w++) {
+      const rev = baseRev * Math.pow(1 + growth, w - 1) * (dipWeek === w ? 0.6 : 1);
+      const totalIn = rev + ar + otherIn;
+      const totalOut = payroll + cogs + opex + capex + otherOut + (w === 6 ? oneTime : 0);
+      const ncf = totalIn - totalOut;
+      balance += ncf;
+      weeks.push({ w, rev, totalIn, totalOut, ncf, balance });
+    }
+    return { weeks, opening, minCash };
+  }
+
+  function updateAll() {
+    const { weeks, opening, minCash } = buildForecast();
+    const ending = weeks[12].balance;
+    const netflow = ending - opening;
+    const avgNcf = netflow / 13;
+    const belowMin = weeks.filter(w => w.balance < minCash).length;
+
+    const setMetric = (id, val, cls) => {
+      const el = document.getElementById(id);
+      el.textContent = fmt(val);
+      el.className = 'metric-val ' + cls;
+    };
+
+    setMetric('m-netflow', netflow, netflow >= 0 ? 'pos' : 'neg');
+    setMetric('m-ending', ending, ending < minCash ? 'neg' : ending < minCash * 1.5 ? 'warn' : 'pos');
+    const mw = document.getElementById('m-weeks');
+    mw.textContent = belowMin;
+    mw.className = 'metric-val ' + (belowMin > 0 ? 'neg' : 'pos');
+    setMetric('m-avg', avgNcf, avgNcf >= 0 ? 'pos' : 'neg');
+
+    updateChart(weeks, minCash);
+    updateTable(weeks, minCash);
+  }
+
+  function updateChart(weeks, minCash) {
+    const labels = weeks.map(w => 'Wk ' + w.w);
+    const balances = weeks.map(w => Math.round(w.balance));
+    const ncfs = weeks.map(w => Math.round(w.ncf));
+    const barColors = ncfs.map(v => v >= 0 ? '#1D9E75bb' : '#E24B4Abb');
+
+    if (cfChart) { cfChart.destroy(); cfChart = null; }
+
+    cfChart = new Chart(document.getElementById('cfChart'), {
+      type: 'bar',
+      data: {
+        labels,
+        datasets: [
+          {
+            type: 'line',
+            label: 'Cash Balance',
+            data: balances,
+            borderColor: '#c9a84c',
+            borderWidth: 2,
+            pointRadius: 3,
+            pointBackgroundColor: '#c9a84c',
+            tension: 0.3,
+            yAxisID: 'yBalance',
+            fill: false,
+            order: 1
+          },
+          {
+            type: 'bar',
+            label: 'Net Cash Flow',
+            data: ncfs,
+            backgroundColor: barColors,
+            yAxisID: 'yNcf',
+            order: 2
+          }
+        ]
+      },
+      options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        plugins: {
+          legend: { display: false },
+          tooltip: {
+            callbacks: {
+              label: ctx => ctx.dataset.label + ': ' + (ctx.parsed.y < 0 ? '-$' : '$') + Math.abs(ctx.parsed.y).toLocaleString()
+            }
+          }
+        },
+        scales: {
+          x: {
+            ticks: { color: '#8a9bb0', font: { size: 11 }, autoSkip: false, maxRotation: 0 },
+            grid: { display: false }
+          },
+          yBalance: {
+            position: 'left',
+            ticks: { color: '#8a9bb0', font: { size: 10 }, callback: v => fmt(v) },
+            grid: { color: 'rgba(201,168,76,0.07)' },
+            title: { display: true, text: 'Balance', color: '#8a9bb0', font: { size: 10 } }
+          },
+          yNcf: {
+            position: 'right',
+            ticks: { color: '#8a9bb0', font: { size: 10 }, callback: v => fmt(v) },
+            grid: { display: false },
+            title: { display: true, text: 'Net CF', color: '#8a9bb0', font: { size: 10 } }
+          }
+        }
+      }
+    });
+  }
+
+  function updateTable(weeks, minCash) {
+    document.getElementById('tableHead').innerHTML =
+      '<th>Metric</th>' + weeks.map(w => `<th>Wk ${w.w}</th>`).join('');
+
+    const rows = [
+      { label: 'Total Inflows', key: 'totalIn' },
+      { label: 'Total Outflows', key: 'totalOut' },
+      { label: 'Net Cash Flow', key: 'ncf', colored: true },
+      { label: 'Ending Balance', key: 'balance', colored: true }
+    ];
+
+    document.getElementById('tableBody').innerHTML = rows.map(r =>
+      `<tr><td>${r.label}</td>${weeks.map(w => {
+        const val = w[r.key];
+        let cls = '';
+        if (r.colored) cls = val >= 0 ? 'pos-cell' : 'neg-cell';
+        if (r.key === 'balance' && val < minCash) cls = 'neg-cell';
+        return `<td class="${cls}">${fmt(val)}</td>`;
+      }).join('')}</tr>`
+    ).join('');
+  }
+
+  async function runAnalysis() {
+    const btn = document.getElementById('analyzeBtn');
+    const out = document.getElementById('aiOutput');
+    btn.disabled = true;
+    btn.textContent = 'Analyzing…';
+    out.innerHTML = '<span class="ai-thinking">Claude is reviewing your forecast...</span>';
+
+    const { weeks, opening, minCash } = buildForecast();
+    const ending = weeks[12].balance;
+    const netflow = ending - opening;
+    const belowMin = weeks.filter(w => w.balance < minCash).length;
+    const lowestBal = Math.min(...weeks.map(w => w.balance));
+    const lowestWk = weeks.find(w => w.balance === lowestBal);
+    const avgNcf = netflow / 13;
+
+    const prompt = `You are a senior FP&A analyst reviewing a 13-week rolling cash flow forecast. Here is the data:
+
+Opening cash balance: ${fmtFull(opening)}
+Minimum cash threshold: ${fmtFull(minCash)}
+Ending balance (week 13): ${fmtFull(ending)}
+13-week net cash flow: ${fmtFull(netflow)}
+Average weekly net cash flow: ${fmtFull(avgNcf)}
+Weeks where balance falls below minimum threshold: ${belowMin}
+Lowest balance point: ${fmtFull(lowestBal)} in week ${lowestWk ? lowestWk.w : 'N/A'}
+
+Weekly data:
+${weeks.map(w => `Week ${w.w}: Inflows ${fmtFull(w.totalIn)}, Outflows ${fmtFull(w.totalOut)}, NCF ${fmtFull(w.ncf)}, Balance ${fmtFull(w.balance)}`).join('\n')}
+
+Provide a concise 3-paragraph analysis covering: (1) overall cash health and trend, (2) key risks or warning signs, (3) 2-3 specific actionable recommendations. Be direct and specific — this is for a finance professional. Use plain text only, no markdown symbols or bullet points.`;
+
+    try {
+      const res = await fetch('https://api.anthropic.com/v1/messages', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          model: 'claude-sonnet-4-20250514',
+          max_tokens: 1000,
+          messages: [{ role: 'user', content: prompt }]
+        })
+      });
+      const data = await res.json();
+      const text = data.content?.find(b => b.type === 'text')?.text || 'No response received.';
+      out.innerHTML = text.split(/\n\n+/).filter(Boolean).map(p => `<p>${p.trim()}</p>`).join('');
+    } catch (e) {
+      out.innerHTML = '<span class="ai-thinking">Unable to reach the API. Please try again.</span>';
+    }
+
+    btn.disabled = false;
+    btn.textContent = 'Analyze my forecast →';
+  }
+
+  document.querySelectorAll('input').forEach(el => el.addEventListener('input', updateAll));
+  updateAll();
+</script>
+</body>
+</html>
